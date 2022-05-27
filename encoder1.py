@@ -61,8 +61,8 @@ def write_to_file(filepath, dc, ac, blocks_count, tables):
                 "No such directory: {}".format(
                     os.path.dirname(filepath))) from e
 
-    for table_name in ['dc_y', 'ac_y', 'dc_c', 'ac_c']:
-    
+    #for table_name in ['dc_y', 'ac_y', 'dc_c', 'ac_c']:
+    for table_name in ['dc_y', 'ac_y']:
 
         # 16 bits for 'table_size'
         f.write(uint_to_binstr(len(tables[table_name]), 16))
@@ -89,12 +89,12 @@ def write_to_file(filepath, dc, ac, blocks_count, tables):
     f.write(uint_to_binstr(blocks_count, 32))
 
     for b in range(blocks_count):
-        for c in range(3):
+        for c in range(1):
             category = bits_required(dc[b, c])
             symbols, values = run_length_encode(ac[b, :, c])
 
-            dc_table = tables['dc_y'] if c == 0 else tables['dc_c']#허프만 테이블
-            ac_table = tables['ac_y'] if c == 0 else tables['ac_c']#허프만 테이블
+            dc_table = tables['dc_y']  
+            ac_table = tables['ac_y'] 
 
             f.write(dc_table[category])
             f.write(int_to_binstr(dc[b, c]))
@@ -164,8 +164,8 @@ def main():
 
     tables = {'dc_y': H_DC_Y.value_to_bitstring_table(),
               'ac_y': H_AC_Y.value_to_bitstring_table(),
-              'dc_c': H_DC_C.value_to_bitstring_table(),#흑백으로 할거라 색상정보 필요없어서 주석처리
-              'ac_c': H_AC_C.value_to_bitstring_table()#흑백으로 할거라 색상정보 필요없어서 주석처리
+              #'dc_c': H_DC_C.value_to_bitstring_table(),#흑백으로 할거라 색상정보 필요없어서 주석처리
+              #'ac_c': H_AC_C.value_to_bitstring_table()#흑백으로 할거라 색상정보 필요없어서 주석처리
               }
 
     write_to_file(output_file, dc, ac, blocks_count, tables)
